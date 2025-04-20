@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import uvicorn
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -11,6 +11,15 @@ app = FastAPI(
     title="小红书内容提取API",
     description="提取小红书笔记的标题、描述、图片等信息",
     version="1.0.0"
+)
+
+# 添加CORS中间件
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 允许所有来源
+    allow_credentials=True,
+    allow_methods=["*"],  # 允许所有方法
+    allow_headers=["*"],  # 允许所有头部
 )
 
 # 定义请求模型
@@ -137,12 +146,4 @@ async def root():
     """API根路径，返回简单的欢迎信息"""
     return {"message": "欢迎使用小红书内容提取API"}
 
-# 添加Uvicorn服务器配置
-if __name__ == "__main__":
-    uvicorn.run(
-        "app:app",
-        host="0.0.0.0",  # 监听所有网络接口
-        port=8000,       # 端口号
-        reload=True,     # 开发模式下自动重载
-        workers=1        # 工作进程数
-    ) 
+# 移除本地运行的代码，因为Vercel会使用自己的服务器配置 
